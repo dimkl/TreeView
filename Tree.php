@@ -22,15 +22,25 @@ class Tree
     private $offset='';
     public $offsetPlaceholder='%%OFFSET%%';
     //handlers
+    private $outputHandler;
+    private $traverseDataHandler;
 
     public function __construct($elements) {
-    	$this->list[$this->rootId]=array();
-    	$this->elements=$elements;
+        $this->outputHandler= function(Node &$node){
+            $this->output.=$node->offset.$node->data."<br/>";
+        };
+        $this->traverseDataHandler=function(Node &$child,Node &$parent){
+             var_dump($child,$parent);
+            $child->offset = $this->offsetPlaceholder.$parent->offset;
+        };
+
+        $this->list[$this->rootId]=array();
+        $this->elements=$elements;
         $this->elements[0]=new Node(0);
         
         foreach ($elements as $el) {
             if (!isset($this->list[$el->parentid])){
-            	$this->list[$el->parentid] = array();
+                $this->list[$el->parentid] = array();
             }
             array_push($this->list[$el->parentid],$el->id);
         }
@@ -56,8 +66,10 @@ class Tree
         foreach ($this->list[$nodeId] as $childId) {
             $child=$this->elements[$childId];
            
-            $this->dataHandler($child,$this->elements[$nodeId]);            
-            $this->outputConstructor($child);
+            call_user_func_array($this->outputHandler,[&$child]);
+            call_user_func_array($this->traverseDataHandler,[&$child, &$this->elements[$nodeId]]);
+            //$this->dataHandler($child,$this->elements[$nodeId]);            
+            //$this->outputConstructor($child);
             
             $this->preOrderTraversal($childId);
         }
@@ -67,12 +79,12 @@ class Tree
         $this->offset=$offset;
     }
     
-    public function outputConstructor(Node $node){
-        $this->output.=$node->offset.$node->data."<br/>";
+    public function setOutputHandler(Callable $handler){
+        $this->outputHandler=$handler;
     }
 
-    public function dataHandler(Node $child, Node $parent){
-         $child->offset = $this->offsetPlaceholder.$parent->offset;
+    public function setTraverseDataHandler(Callable $handler){
+        $this->traverseDataHandler=$handler;
     }
 
     public function __toString(){
