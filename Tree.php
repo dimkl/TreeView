@@ -1,22 +1,10 @@
 <?php
-class Node
-{
-    public $offset = '';
-    public $parentid = '';
-    public $id;
-    public $text='';
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR .'Node.php';
 
-    public function __construct($id,$parentid=0,$text='',$offset=''){
-    	$this->id=$id;
-    	$this->parentid=$parentid;
-    	$this->text=$text;
-    	$this->offset=$offset;
-    }
-
-    public static function fetchAll(){
-    	return array();
-    }
-}
+const PREORDER_TRAVERSAL=1;
+const POSTORDER_TRAVERSAL=2;
+const MIDORDER_TRAVERSAL=3;
+const BYLEVEL_TRAVERSAL=4;
 
 class Tree
 {
@@ -33,6 +21,7 @@ class Tree
     private $output='';
     private $offset='';
     public $offsetPlaceholder='%%OFFSET%%';
+    //handlers
 
     public function __construct($elements) {
     	$this->list[$this->rootId]=array();
@@ -46,66 +35,47 @@ class Tree
             array_push($this->list[$el->parentid],$el->id);
         }
     }
-    
-    public function preOrder($id) {
-        if($id==$this->rootId)
-            $this->output='';
+    /**
+     * Traverse tree using preorder traversal
+     * 
+     */ 
+    public function traverse($id, $traversalType=PREORDER_TRAVERSAL) {
+       if($traversalType==PREORDER_TRAVERSAL){
+           return $this->preOrderTraversal($id);
+       }
 
-        if (!isset($this->list[$id]) || count($this->list[$id])==0) return;
-
-        foreach ($this->list[$id] as $childId) {
-            $child=$this->elements[$childId];
-            $child->offset = $this->offsetPlaceholder.$this->elements[$id]->offset;
-            //create output
-            $this->output.=$child->offset.$child->text."<br/>";
-            $this->preOrder($childId);
-        }
+       throw new Exception("Traversal type defined in traverse is not valid or not implemented!", 1);
     }
     
+    private function preOrderTraversal($nodeId){
+         if($nodeId==$this->rootId)
+            $this->output='';
+
+        if (!isset($this->list[$nodeId])||count($this->list[$nodeId])==0) return;
+
+        foreach ($this->list[$nodeId] as $childId) {
+            $child=$this->elements[$childId];
+           
+            $this->dataHandler($child,$this->elements[$nodeId]);            
+            $this->outputConstructor($child);
+            
+            $this->preOrderTraversal($childId);
+        }
+    }
+
     public function setOffset($offset){
         $this->offset=$offset;
     }
     
+    public function outputConstructor(Node $node){
+        $this->output.=$node->offset.$node->data."<br/>";
+    }
+
+    public function dataHandler(Node $child, Node $parent){
+         $child->offset = $this->offsetPlaceholder.$parent->offset;
+    }
+
     public function __toString(){
         return str_replace($this->offsetPlaceholder,$this->offset,$this->output);
     }
 }
-
-class TreeTest{
-	public function __construct(){
-		$tree= new Tree(self::getTestNodes());
-        $tree->setOffset('--');
-		$tree->preorder($tree->rootId);
-
-        echo $tree;
-	}
-
-	private static function getTestNodes(){
-		return array(
-         '1'=>new Node(1,2,'1'),
-         '2'=>new Node(2,4,'2'),
-         '3'=>new Node(3,4,'3'),
-         '4'=>new Node(4,0,'4'),
-         '5'=>new Node(5,2,'5'), 
-         '11'=>new Node(11,2,'11'),
-         '12'=>new Node(12,4,'12'),
-         '13'=>new Node(13,4,'13'),
-         '14'=>new Node(14,0,'14'),
-         '15'=>new Node(15,2,'15')
-		    // '1'=>new Node(1,0,'A',''),
-    	 //    '2'=>new Node(2,1,'A',''),
-    	 //    '3'=>new Node(3,0,'A',''),
-    	 //    '11'=>new Node(11,2,'A',''),
-    	 //    '12'=>new Node(12,0,'A',''),
-    	 //    '13'=>new Node(13,0,'A',''),
-    	 //    '14'=>new Node(14,3,'A',''),
-    	 //    '15'=>new Node(15,0,'A',''),
-    	 //    '16'=>new Node(16,0,'A',''),
-    	 //    '22'=>new Node(22,15,'A',''),
-    	 //    '34'=>new Node(34,0,'A',''),
-    	 //    '35'=>new Node(35,0,'A','')
-    	);
-	}
-}
-
-$test=new TreeTest;
