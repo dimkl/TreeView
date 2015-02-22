@@ -21,7 +21,6 @@ class Tree
     private $output='';
     private $offset='';
     public $offsetPlaceholder='%%OFFSET%%';
-    //handlers
 
     public function __construct($elements) {
     	$this->list[$this->rootId]=array();
@@ -35,6 +34,7 @@ class Tree
             array_push($this->list[$el->parentid],$el->id);
         }
     }
+    
     /**
      * Traverse tree using preorder traversal
      * 
@@ -48,7 +48,7 @@ class Tree
     }
     
     private function preOrderTraversal($nodeId){
-         if($nodeId==$this->rootId)
+        if($nodeId==$this->rootId)
             $this->output='';
 
         if (!isset($this->list[$nodeId])||count($this->list[$nodeId])==0) return;
