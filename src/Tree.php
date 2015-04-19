@@ -1,5 +1,5 @@
 <?php
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR .'Node.php';
+namespace Tree;
 
 class Tree
 {
@@ -37,7 +37,7 @@ class Tree
      * Traverse tree using preorder traversal
      * 
      */ 
-    public function traverse($id, $traversalType=PREORDER_TRAVERSAL) {
+    public function traverse($id, $traversalType=Tree::PREORDER_TRAVERSAL) {
        if($traversalType==Tree::PREORDER_TRAVERSAL){
            return $this->preOrderTraversal($id);
        }

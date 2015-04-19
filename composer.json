@@ -1,0 +1,21 @@
+{
+    "name": "dimkl/treeview",
+    "description": "Tree implementation for outputing data in tree view using an offset",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "dimkl",
+            "email": "dimitris.klouvas@gmail.com"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
+	"autoload":{
+		"psr-4": {
+			"Tree\\": "src/"
+		}
+	}
+}

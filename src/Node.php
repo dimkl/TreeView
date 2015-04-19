@@ -1,4 +1,6 @@
 <?php 
+namespace Tree;
+
 class Node
 {
     public $id;
