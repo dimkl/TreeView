@@ -1,17 +1,15 @@
 <?php
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR .'Node.php';
 
-const PREORDER_TRAVERSAL=1;
-const POSTORDER_TRAVERSAL=2;
-const MIDORDER_TRAVERSAL=3;
-const BYLEVEL_TRAVERSAL=4;
-
 class Tree
 {
+    const PREORDER_TRAVERSAL=1;
+    const POSTORDER_TRAVERSAL=2;
+    const MIDORDER_TRAVERSAL=3;
+    const BYLEVEL_TRAVERSAL=4;
     /*
      * $list=array(`parentid`:[`id`]}
      * $elements= {`id`:`element`};
-     * joomla: $db->loadObjectList('id');
      */
     public $rootId=0;
     
@@ -40,7 +38,7 @@ class Tree
      * 
      */ 
     public function traverse($id, $traversalType=PREORDER_TRAVERSAL) {
-       if($traversalType==PREORDER_TRAVERSAL){
+       if($traversalType==Tree::PREORDER_TRAVERSAL){
            return $this->preOrderTraversal($id);
        }
 
